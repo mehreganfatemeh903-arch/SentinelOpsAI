@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: sentinelops
+      POSTGRES_USER: sentinelops
+      POSTGRES_PASSWORD: sentinelops
+    ports: ["5433:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U sentinelops -d sentinelops"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://sentinelops:sentinelops@db:5432/sentinelops
+      JWT_SECRET: replace-this-with-a-strong-random-secret
+    ports: ["8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres_data:

@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+.venv/
+node_modules/
+dist/
+*.log
+.idea/
+.vscode/
+
+# Local backup
+SentinelOpsAI_backup_*/
+
+# Local source backups
+*.backup
+
+# Local source backups
+*.backup
