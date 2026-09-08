@@ -51,6 +51,15 @@ class Tool(Base):
     description: Mapped[str|None]=mapped_column(String(500))
     sensitivity: Mapped[int]=mapped_column(Integer, default=0, nullable=False)
     active: Mapped[bool]=mapped_column(Boolean, default=True, nullable=False)
+    adapter_name: Mapped[str] = mapped_column(
+        String(80),
+        default="simulated",
+        nullable=False,
+    )
+    credential_ref: Mapped[str | None] = mapped_column(
+        String(120),
+        nullable=True,
+    )
 
 class AgentTool(Base):
     __tablename__='agent_tools'
