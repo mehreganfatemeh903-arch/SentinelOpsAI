@@ -36,11 +36,7 @@ class ToolAdapter(ABC):
 
 
 class SimulatedToolAdapter(ToolAdapter):
-    """
-    Safe compatibility adapter.
-
-    The simulated adapter does not require external credentials.
-    """
+    """Safe compatibility adapter."""
 
     name = "simulated"
 
@@ -59,7 +55,7 @@ class SimulatedToolAdapter(ToolAdapter):
 
 class EnvironmentToolAdapter(ToolAdapter):
     """
-    Example real-tool boundary.
+    Server-side adapter boundary.
 
     The credential is resolved exclusively on the SentinelOps server.
     The raw secret is never returned in AdapterResult.
@@ -71,10 +67,7 @@ class EnvironmentToolAdapter(ToolAdapter):
         self.credential_ref = CredentialRef(credential_name)
 
     def execute(self, request: AdapterRequest) -> AdapterResult:
-        try:
-            credential_provider.get(self.credential_ref)
-        except CredentialError:
-            raise
+        credential_provider.get(self.credential_ref)
 
         return AdapterResult(
             status="authorized",
@@ -120,10 +113,3 @@ class AdapterRegistry:
 
 registry = AdapterRegistry()
 registry.register(SimulatedToolAdapter())
-
-
-registry = AdapterRegistry()
-registry.register(SimulatedToolAdapter())
-registry.register(
-    EnvironmentToolAdapter("SENTINELOPS_EXTERNAL_TOOL_SECRET")
-)
