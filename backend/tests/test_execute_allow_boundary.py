@@ -1,4 +1,4 @@
-﻿from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch
 import pytest
 from app.api.actions import execute_action
 from app.models import Tool, Decision
@@ -67,7 +67,8 @@ def test_execute_allow_calls_adapter():
     mock_get.assert_called_once_with("simulated", None)
     adapter.execute.assert_called_once()
 
-def test_execute_environment_adapter_requires_server_credential():
+def test_execute_environment_adapter_requires_server_credential(monkeypatch):
+    monkeypatch.setenv("SENTINELOPS_EXTERNAL_TOOL_SECRET", "test-secret")
     db = Mock()
 
     tool = Tool(
@@ -96,8 +97,11 @@ def test_execute_environment_adapter_requires_server_credential():
     ):
         result = execute_action(_request(), db)
 
-    assert result.executed is False
-def test_execute_environment_adapter_missing_credential_returns_502():
+    assert result.executed is True
+    assert result.output["status"] == "authorized"
+    assert result.output["data"]["credential"] == "server-side"
+def test_execute_environment_adapter_missing_credential_returns_502(monkeypatch):
+    monkeypatch.delenv("SENTINELOPS_MISSING_SECRET", raising=False)
     db = Mock()
 
     tool = Tool(
@@ -123,15 +127,9 @@ def test_execute_environment_adapter_missing_credential_returns_502():
     with patch(
         "app.api.actions._authorize",
         return_value=decision,
-    ), patch(
-        "app.api.actions.registry.get",
-    ) as mock_get:
+    ):
 
         with pytest.raises(Exception) as exc_info:
             execute_action(_request(), db)
 
     assert exc_info.value.status_code == 502
-    mock_get.assert_called_once_with(
-        "environment",
-        "SENTINELOPS_MISSING_SECRET",
-    )

@@ -1,4 +1,4 @@
-from backend.app.schemas.tool import ToolCreate
+﻿from app.schemas.tool import ToolCreate
 
 def test_tool_create_supports_adapter_and_credential_ref():
     tool = ToolCreate(
