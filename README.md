@@ -10,7 +10,7 @@ SentinelOps sits between an AI agent and enterprise tools. It authenticates the 
 
 `AI Agent → SentinelOps Gateway → Policy + Risk + Permission Graph → Enterprise Tool`
 
-## Phase 4
+## Phase 5.1
 
 The project now includes:
 - FastAPI backend + PostgreSQL
@@ -56,4 +56,4 @@ alembic upgrade head
 
 ## Important
 
-The `execute` endpoint contains a deterministic simulated executor for the demo. Real production deployments should place actual credentials and tool adapters behind the gateway and never expose privileged credentials to the agent process.
+The gateway now routes approved and allowed actions through configured tool adapters. HTTP tools require HTTPS and reject private or local endpoints. Credentials are resolved server-side and are never returned to the agent. Production deployments should configure real credentials through a secure secret manager and review adapter endpoint policies.
