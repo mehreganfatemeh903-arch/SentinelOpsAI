@@ -60,6 +60,10 @@ class Tool(Base):
         String(120),
         nullable=True,
     )
+    endpoint: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
 
 class AgentTool(Base):
     __tablename__='agent_tools'

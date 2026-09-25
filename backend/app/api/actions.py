@@ -205,6 +205,7 @@ def execute_action(
         adapter = registry.get(
             tool.adapter_name,
             tool.credential_ref,
+            tool.endpoint,
         )
     except (ValueError, CredentialError) as exc:
         raise HTTPException(

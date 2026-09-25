@@ -1,4 +1,4 @@
-﻿from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 class ToolCreate(BaseModel):
     name: str = Field(min_length=2, max_length=120)
@@ -6,6 +6,7 @@ class ToolCreate(BaseModel):
     sensitivity: int = Field(0, ge=0, le=100)
     adapter_name: str = Field(default="simulated", min_length=2, max_length=80)
     credential_ref: str | None = Field(default=None, max_length=120)
+    endpoint: str | None = Field(default=None, max_length=500)
 
 class ToolRead(ToolCreate):
     id: str
