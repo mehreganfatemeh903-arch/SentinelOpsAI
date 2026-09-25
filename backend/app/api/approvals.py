@@ -1,15 +1,19 @@
-﻿from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import require_roles
 from app.db.session import get_db
+from app.services.credentials import CredentialError
+from app.services.adapters import AdapterRequest, registry
+
 from app.models import (
     Agent,
     Approval,
     Decision,
     EventType,
     RuntimeEvent,
+    Tool,
     User,
     UserRole,
 )
@@ -154,11 +158,42 @@ def execute_approved(
             detail="Approved event is not executable",
         )
 
+    tool_id = metadata.get("tool_id")
+    if not tool_id:
+        raise HTTPException(status_code=400, detail="Approved event has no tool_id")
+
+    tool = db.get(Tool, tool_id)
+    if not tool or not tool.active:
+        raise HTTPException(status_code=404, detail="Tool not found or inactive")
+
+    try:
+        adapter = registry.get(
+            tool.adapter_name,
+            tool.credential_ref,
+            tool.endpoint,
+        )
+    except (ValueError, CredentialError) as exc:
+        raise HTTPException(status_code=500, detail="Execution adapter is not configured") from exc
+
+    adapter_request = AdapterRequest(
+        agent_id=event.agent_id,
+        tool_id=tool.id,
+        action=event.action,
+        resource=event.resource,
+        context=metadata.get("context") or {},
+    )
+
+    try:
+        result = adapter.execute(adapter_request)
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="Tool adapter execution failed") from exc
+
     output = {
-        "status": "simulated",
-        "action": event.action,
-        "resource": event.resource,
-        "message": "Approved tool execution passed through SentinelOps Gateway",
+        "status": result.status,
+        "action": result.action,
+        "resource": result.resource,
+        "message": result.message,
+        "data": result.data,
     }
 
     event.metadata_json = {
@@ -180,4 +215,5 @@ def execute_approved(
         "executed": True,
         "output": output,
     }
+
 

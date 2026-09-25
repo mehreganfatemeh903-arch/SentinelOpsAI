@@ -1,7 +1,8 @@
-﻿from app.db.session import SessionLocal
-from app.models import Agent, Approval, Decision, EventType, RuntimeEvent, User, UserRole
+from app.db.session import SessionLocal
+from app.models import Agent, Approval, Decision, EventType, RuntimeEvent, Tool, User, UserRole
 from app.api.approvals import decide, execute_approved
 from fastapi import HTTPException
+from uuid import uuid4
 
 
 def get_operator(db):
@@ -14,6 +15,10 @@ def create_test_event(db, decision=Decision.APPROVAL):
     agent = db.query(Agent).filter(Agent.active.is_(True)).first()
     assert agent is not None
 
+    tool = Tool(name=f"security-regression-tool-{uuid4()}", adapter_name="simulated", active=True)
+    db.add(tool)
+    db.flush()
+
     event = RuntimeEvent(
         agent_id=agent.id,
         event_type=EventType.ACTION,
@@ -22,7 +27,7 @@ def create_test_event(db, decision=Decision.APPROVAL):
         decision=decision,
         risk_score=85,
         reasons=["Security regression test"],
-        metadata_json={},
+        metadata_json={"tool_id": tool.id},
     )
     db.add(event)
     db.flush()
