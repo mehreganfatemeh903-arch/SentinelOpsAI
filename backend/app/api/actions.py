@@ -192,7 +192,7 @@ def execute_action(
             "tool_id is required for execution",
         )
 
-    # Phase 5.1 currently uses the safe simulated adapter.
+    # Tool execution is routed through the configured adapter registry.
     # The adapter is server-side; the agent never receives credentials.
     tool = db.get(Tool, req.tool_id)
     if not tool or not tool.active:
