@@ -17,6 +17,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://sentinelops:sentinelops@db:5432/sentinelops
       JWT_SECRET: replace-this-with-a-strong-random-secret
+      SENTINELOPS_EXTERNAL_TOOL_SECRET: integration-test-secret
     ports: ["8000:8000"]
     depends_on:
       db:
