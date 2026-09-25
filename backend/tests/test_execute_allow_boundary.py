@@ -64,7 +64,7 @@ def test_execute_allow_calls_adapter():
     assert result.output["resource"] == "test-resource"
     assert result.output["data"]["verified"] is True
 
-    mock_get.assert_called_once_with("simulated", None)
+    mock_get.assert_called_once_with("simulated", None, None)
     adapter.execute.assert_called_once()
 
 def test_execute_environment_adapter_requires_server_credential(monkeypatch):
