@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     def model_post_init(self, __context: object) -> None:
         if (
             self.environment.lower() == "production"
-            and self.jwt_secret == "change-me-in-production-use-32-plus-random-chars"
+            and self.jwt_secret == "change-me-in-production-use-32-plus-random-chars" or len(self.jwt_secret) < 32
         ):
             raise ValueError("A production JWT secret must be explicitly configured")
 

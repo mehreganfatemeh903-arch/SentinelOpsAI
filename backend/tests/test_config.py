@@ -9,3 +9,9 @@ def test_production_rejects_default_jwt_secret():
             environment="production",
             jwt_secret="change-me-in-production-use-32-plus-random-chars",
         )
+def test_production_rejects_short_jwt_secret():
+    with pytest.raises(ValueError):
+        Settings(
+            environment="production",
+            jwt_secret="too-short",
+        )
