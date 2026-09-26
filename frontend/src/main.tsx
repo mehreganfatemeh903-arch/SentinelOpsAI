@@ -1000,6 +1000,7 @@ function SecurityPanel({ alerts }: { alerts: Event[] }) {
   );
 }
 
+
 function ApprovalPanel({
   approvals,
   reload,
@@ -1027,6 +1028,25 @@ function ApprovalPanel({
       reload();
     } catch (err: any) {
       setError(err?.message || 'Approval action failed.');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function execute(id: string) {
+    setBusyId(id);
+
+    try {
+      await apiJson(
+        `/approvals/${id}/execute`,
+        token,
+        { method: 'POST' },
+      );
+
+      setError('');
+      reload();
+    } catch (err: any) {
+      setError(err?.message || 'Execution failed.');
     } finally {
       setBusyId(null);
     }
@@ -1077,6 +1097,16 @@ function ApprovalPanel({
                 >
                   Reject
                 </button>
+
+                {approval.status === 'approved' && (
+                  <button
+                    className="primary"
+                    onClick={() => execute(approval.id)}
+                    disabled={busyId === approval.id}
+                  >
+                    Execute
+                  </button>
+                )}
               </div>
             </article>
           ))}
@@ -1085,6 +1115,7 @@ function ApprovalPanel({
     </section>
   );
 }
+
 
 function EventRow({
   event,
