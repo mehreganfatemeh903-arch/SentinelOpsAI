@@ -23,25 +23,33 @@ router = APIRouter(prefix="/approvals", tags=["approvals"])
 
 @router.get("")
 def pending(
+    status: str = "pending",
     db: Session = Depends(get_db),
     _=Depends(require_roles(UserRole.ADMIN, UserRole.OPERATOR)),
 ):
-    rows = db.scalars(
-        select(Approval)
-        .where(Approval.status == "pending")
-        .order_by(Approval.created_at.desc())
-    ).all()
+    if status not in {"pending", "active", "all"}:
+        raise HTTPException(status_code=400, detail="Invalid approval status")
 
+    query = select(Approval).order_by(Approval.created_at.desc())
+
+    if status == "pending":
+        query = query.where(Approval.status == "pending")
+    elif status == "active":
+        query = query.where(Approval.status.in_(["pending", "approved"]))
+
+    rows = db.scalars(query).all()
     result = []
 
     for approval in rows:
         event = db.get(RuntimeEvent, approval.event_id)
+        metadata = (event.metadata_json or {}) if event else {}
 
         result.append(
             {
                 "id": approval.id,
                 "event_id": approval.event_id,
                 "status": approval.status,
+                "executed": metadata.get("executed") is True,
                 "created_at": approval.created_at,
                 "action": event.action if event else None,
                 "resource": event.resource if event else None,
@@ -51,7 +59,6 @@ def pending(
         )
 
     return result
-
 
 @router.post("/{approval_id}/decision")
 def decide(

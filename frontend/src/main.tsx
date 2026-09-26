@@ -119,6 +119,8 @@ function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [alerts, setAlerts] = useState<Event[]>([]);
   const [approvals, setApprovals] = useState<any[]>([]);
+  const [approvedApprovals, setApprovedApprovals] = useState<any[]>([]);
+  const [executedApprovals, setExecutedApprovals] = useState<any[]>([]);
   const [tab, setTab] = useState('overview');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -147,7 +149,10 @@ function App() {
       setAlerts(requests[4]);
 
       if (canManage) {
-        setApprovals(await apiJson<any[]>('/approvals', token));
+        const approvalRows = await apiJson<any[]>('/approvals?status=all', token);
+        setApprovals(approvalRows.filter((approval) => approval.status === 'pending'));
+        setApprovedApprovals(approvalRows.filter((approval) => approval.status === 'approved' && approval.executed !== true));
+        setExecutedApprovals(approvalRows.filter((approval) => approval.executed === true));
       } else {
         setApprovals([]);
 
@@ -378,6 +383,8 @@ function App() {
       {tab === 'approvals' && canManage && (
         <ApprovalPanel
           approvals={approvals}
+          approvedApprovals={approvedApprovals}
+          executedApprovals={executedApprovals}
           reload={load}
           token={token}
           setError={setError}
@@ -1003,11 +1010,15 @@ function SecurityPanel({ alerts }: { alerts: Event[] }) {
 
 function ApprovalPanel({
   approvals,
+  approvedApprovals,
+  executedApprovals,
   reload,
   token,
   setError,
 }: {
   approvals: any[];
+  approvedApprovals: any[];
+  executedApprovals: any[];
   reload: () => void;
   token: string;
   setError: (message: string) => void;
@@ -1107,6 +1118,52 @@ function ApprovalPanel({
                     Execute
                   </button>
                 )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+      
+      <h3>Approved - Ready to Execute</h3>
+      {approvedApprovals.length === 0 ? (
+        <Empty text="No approved actions are waiting for execution." />
+      ) : (
+        <div className="approvalList">
+          {approvedApprovals.map((approval) => (
+            <article className="approval" key={approval.id}>
+              <div>
+                <strong>{approval.action}</strong>
+                <small>{approval.resource} � risk {approval.risk_score}/100</small>
+                <p>{(approval.reasons || []).join(' � ')}</p>
+              </div>
+              <div className="approvalActions">
+                <button
+                  className="primary"
+                  onClick={() => execute(approval.id)}
+                  disabled={busyId === approval.id}
+                >
+                  Execute
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      <h3>Recently Executed</h3>
+      {executedApprovals.length === 0 ? (
+        <Empty text="No executed approvals yet." />
+      ) : (
+        <div className="approvalList">
+          {executedApprovals.slice(0, 10).map((approval) => (
+            <article className="approval" key={approval.id}>
+              <div>
+                <strong>{approval.action}</strong>
+                <small>{approval.resource} � risk {approval.risk_score}/100</small>
+                <p>{(approval.reasons || []).join(' � ')}</p>
+              </div>
+              <div className="approvalActions">
+                <span>Executed</span>
               </div>
             </article>
           ))}
@@ -1422,4 +1479,8 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </React.StrictMode>,
 );
+
+
+
+
 
