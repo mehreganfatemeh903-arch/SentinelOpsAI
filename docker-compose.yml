@@ -1,10 +1,10 @@
-services:
+﻿services:
   db:
     image: postgres:17
     environment:
       POSTGRES_DB: sentinelops
       POSTGRES_USER: sentinelops
-      POSTGRES_PASSWORD: sentinelops
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports: ["5433:5432"]
     volumes: ["postgres_data:/var/lib/postgresql/data"]
     healthcheck:
@@ -15,9 +15,10 @@ services:
   backend:
     build: ./backend
     environment:
-      DATABASE_URL: postgresql+psycopg://sentinelops:sentinelops@db:5432/sentinelops
-      JWT_SECRET: replace-this-with-a-strong-random-secret
-      SENTINELOPS_EXTERNAL_TOOL_SECRET: integration-test-secret
+      ENVIRONMENT: ${ENVIRONMENT}
+      DATABASE_URL: postgresql+psycopg://sentinelops:${POSTGRES_PASSWORD}@db:5432/sentinelops
+      JWT_SECRET: ${JWT_SECRET}
+      SENTINELOPS_EXTERNAL_TOOL_SECRET: ${SENTINELOPS_EXTERNAL_TOOL_SECRET}
     ports: ["8000:8000"]
     depends_on:
       db:

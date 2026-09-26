@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+﻿from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -11,9 +11,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     def model_post_init(self, __context: object) -> None:
-        if (
-            self.environment.lower() == "production"
-            and self.jwt_secret == "change-me-in-production-use-32-plus-random-chars" or len(self.jwt_secret) < 32
+        if self.environment.lower() == "production" and (
+            self.jwt_secret == "change-me-in-production-use-32-plus-random-chars"
+            or len(self.jwt_secret) < 32
         ):
             raise ValueError("A production JWT secret must be explicitly configured")
 

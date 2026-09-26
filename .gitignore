@@ -18,3 +18,5 @@ SentinelOpsAI_backup_*/
 
 # Local source backups
 *.backup
+
+*.bak_*
