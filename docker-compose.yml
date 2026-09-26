@@ -12,6 +12,7 @@
       interval: 5s
       timeout: 5s
       retries: 10
+
   backend:
     build: ./backend
     environment:
@@ -23,5 +24,12 @@
     depends_on:
       db:
         condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports: ["3000:80"]
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
