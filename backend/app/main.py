@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.db.session import Base, engine
 from app.api.auth import router as auth_router
 from app.api.agents import router as agents_router
 from app.api.tools import router as tools_router
@@ -20,8 +19,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-@app.on_event('startup')
-def startup(): Base.metadata.create_all(bind=engine)
 app.include_router(auth_router,prefix='/api/v1'); app.include_router(agents_router,prefix='/api/v1'); app.include_router(tools_router,prefix='/api/v1'); app.include_router(policies_router,prefix='/api/v1'); app.include_router(actions_router,prefix='/api/v1'); app.include_router(approvals_router,prefix='/api/v1'); app.include_router(events_router,prefix='/api/v1'); app.include_router(api_keys_router,prefix='/api/v1'); app.include_router(alerts_router,prefix='/api/v1')
 @app.get('/health',tags=['system'])
 def health(): return {'status':'ok','service':settings.app_name,'version':'0.3.0'}
