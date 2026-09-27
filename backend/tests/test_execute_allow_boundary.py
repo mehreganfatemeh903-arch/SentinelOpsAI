@@ -133,3 +133,28 @@ def test_execute_environment_adapter_missing_credential_returns_502(monkeypatch)
             execute_action(_request(), db)
 
     assert exc_info.value.status_code == 502
+
+def test_execute_non_allow_never_reaches_adapter():
+    db = Mock()
+
+    decision = ActionDecision(
+        decision=Decision.BLOCK.value,
+        risk_score=100,
+        reasons=["blocked by policy"],
+        approval_required=False,
+        event_id="event-blocked",
+    )
+
+    with patch(
+        "app.api.actions._authorize",
+        return_value=decision,
+    ), patch(
+        "app.api.actions.registry.get",
+    ) as mock_get:
+
+        result = execute_action(_request(), db)
+
+    assert result.executed is False
+    assert result.output is None
+    assert result.decision == Decision.BLOCK.value
+    mock_get.assert_not_called()
