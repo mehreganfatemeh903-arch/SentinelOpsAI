@@ -19,6 +19,7 @@
       ENVIRONMENT: ${ENVIRONMENT}
       DATABASE_URL: postgresql+psycopg://sentinelops:${POSTGRES_PASSWORD}@db:5432/sentinelops
       JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS}
       SENTINELOPS_EXTERNAL_TOOL_SECRET: ${SENTINELOPS_EXTERNAL_TOOL_SECRET}
     ports: ["8000:8000"]
     depends_on:

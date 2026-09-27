@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://sentinelops:sentinelops@db:5432/sentinelops"
     jwt_secret: str = "change-me-in-production-use-32-plus-random-chars"
     access_token_expire_minutes: int = 60
+    cors_origins: str = 'http://localhost:5173,http://127.0.0.1:5173'
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
