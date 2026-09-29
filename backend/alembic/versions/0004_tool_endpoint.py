@@ -15,15 +15,25 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column(
-        "tools",
-        sa.Column(
-            "endpoint",
-            sa.String(length=500),
-            nullable=True,
-        ),
-    )
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    columns = {column["name"] for column in inspector.get_columns("tools")}
+
+    if "endpoint" not in columns:
+        op.add_column(
+            "tools",
+            sa.Column(
+                "endpoint",
+                sa.String(length=500),
+                nullable=True,
+            ),
+        )
 
 
 def downgrade():
-    op.drop_column("tools", "endpoint")
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    columns = {column["name"] for column in inspector.get_columns("tools")}
+
+    if "endpoint" in columns:
+        op.drop_column("tools", "endpoint")
