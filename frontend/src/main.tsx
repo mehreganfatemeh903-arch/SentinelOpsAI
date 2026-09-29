@@ -218,7 +218,7 @@ function App() {
     <div className="shell">
       <header>
         <div>
-          <span className="eyebrow">SENTINELOPS AI ط·آ¢ط¢آ· RUNTIME CONTROL PLANE</span>
+          <span className="eyebrow">SENTINELOPS AI - RUNTIME CONTROL PLANE</span>
           <h1>Control what AI agents actually do.</h1>
           <p>
             Identity, tools, policy, risk, approval, execution and evidence in one
@@ -329,15 +329,15 @@ function App() {
 
               <div className="flow">
                 <span>Identity</span>
-                <i>ط£آ¢أ¢â‚¬آ أ¢â‚¬â„¢</i>
+                <i>-&gt;</i>
                 <span>Tool</span>
-                <i>ط£آ¢أ¢â‚¬آ أ¢â‚¬â„¢</i>
+                <i>-&gt;</i>
                 <span>Policy</span>
-                <i>ط£آ¢أ¢â‚¬آ أ¢â‚¬â„¢</i>
+                <i>-&gt;</i>
                 <span>Risk</span>
-                <i>ط£آ¢أ¢â‚¬آ أ¢â‚¬â„¢</i>
+                <i>-&gt;</i>
                 <strong>Decision</strong>
-                <i>ط£آ¢أ¢â‚¬آ أ¢â‚¬â„¢</i>
+                <i>-&gt;</i>
                 <span>Evidence</span>
               </div>
 
@@ -454,7 +454,7 @@ function App() {
 
       <footer>
         <Fingerprint />
-        <span>SentinelOps AI ط·آ¢ط¢آ· Runtime authorization and evidence layer</span>
+        <span>SentinelOps AI - Runtime authorization and evidence layer</span>
       </footer>
     </div>
   );
@@ -598,11 +598,11 @@ function ToolsPanel({
             <div className="field">
               <label>Sensitivity</label>
               <select value={sensitivity} onChange={(e) => setSensitivity(e.target.value)}>
-                <option value="1">1 ط·آ¢ط¢آ· Low</option>
-                <option value="2">2 ط·آ¢ط¢آ· Medium</option>
-                <option value="3">3 ط·آ¢ط¢آ· High</option>
-                <option value="4">4 ط·آ¢ط¢آ· Critical</option>
-                <option value="5">5 ط·آ¢ط¢آ· Critical+</option>
+                <option value="1">1 - Low</option>
+                <option value="2">2 - Medium</option>
+                <option value="3">3 - High</option>
+                <option value="4">4 - Critical</option>
+                <option value="5">5 - Critical+</option>
               </select>
             </div>
 
@@ -887,7 +887,7 @@ function PoliciesPanel({
                   <p>
                     Minimum risk: {policy.min_risk ?? 0}
                     {policy.max_financial_amount != null
-                      ? ` ط·آ¢ط¢آ· Max financial impact: ${policy.max_financial_amount}`
+                      ? ` - Max financial impact: ${policy.max_financial_amount}`
                       : ''}
                   </p>
 
@@ -980,11 +980,11 @@ function ApprovalsPanel({
                   {approval.action || approval.event?.action}
                 </strong>
                 <small>
-                  {approval.resource || approval.event?.resource} ط·آ¢ط¢آ· Risk {approval.risk ?? approval.risk_score ?? 0}
+                  {approval.resource || approval.event?.resource} - Risk {approval.risk ?? approval.risk_score ?? 0}
                 </small>
                 <p>
                   {Array.isArray(approval.reasons)
-                    ? approval.reasons.join(' ط·آ¢ط¢آ· ')
+                    ? approval.reasons.join(' - ')
                     : 'Human review required by policy.'}
                 </p>
               </div>
@@ -1004,7 +1004,7 @@ function ApprovalsPanel({
         )}
       </div>
 
-      <h3 className="sectionTitle">Approved ط·آ¢ط¢آ· Ready to execute</h3>
+      <h3 className="sectionTitle">Approved - Ready to execute</h3>
 
       <div className="approvalList">
         {approvedApprovals.length === 0 ? (
@@ -1020,7 +1020,7 @@ function ApprovalsPanel({
                   {approval.action || approval.event?.action}
                 </strong>
                 <small>
-                  {approval.resource || approval.event?.resource} ط·آ¢ط¢آ· Risk {approval.risk ?? approval.risk_score ?? 0}
+                  {approval.resource || approval.event?.resource} - Risk {approval.risk ?? approval.risk_score ?? 0}
                 </small>
                 <p>Approved by a human reviewer and ready for controlled execution.</p>
               </div>
@@ -1052,7 +1052,7 @@ function ApprovalsPanel({
                   {approval.action || approval.event?.action}
                 </strong>
                 <small>
-                  {approval.resource || approval.event?.resource} ط·آ¢ط¢آ· Risk {approval.risk ?? approval.risk_score ?? 0}
+                  {approval.resource || approval.event?.resource} - Risk {approval.risk ?? approval.risk_score ?? 0}
                 </small>
                 <p>Execution completed and retained in the runtime evidence trail.</p>
               </div>
@@ -1160,7 +1160,7 @@ function Login({ onLogin }: { onLogin: (token: string) => void }) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="ط£آ¢أ¢â€ڑآ¬ط¢آ¢ط£آ¢أ¢â€ڑآ¬ط¢آ¢ط£آ¢أ¢â€ڑآ¬ط¢آ¢ط£آ¢أ¢â€ڑآ¬ط¢آ¢ط£آ¢أ¢â€ڑآ¬ط¢آ¢ط£آ¢أ¢â€ڑآ¬ط¢آ¢ط£آ¢أ¢â€ڑآ¬ط¢آ¢ط£آ¢أ¢â€ڑآ¬ط¢آ¢"
+              placeholder="********"
               required
             />
           </div>
